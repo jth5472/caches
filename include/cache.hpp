@@ -166,8 +166,7 @@ class fixed_sized_cache
 
         return true;
     }
-
-  protected:
+    
     void Clear()
     {
         operation_guard lock{safe_op};
