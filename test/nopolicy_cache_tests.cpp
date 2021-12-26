@@ -9,7 +9,7 @@ using no_policy_cache_t = typename caches::fixed_sized_cache<K, V, caches::NoCac
 TEST(NoPolicyCache, Add_one_element)
 {
     constexpr std::size_t cache_size = 1;
-    caches::fixed_sized_cache<std::string, int> cache(cache_size);
+    caches::fixed_sized_cache<std::string, int> cache(cache_size, "-1", "-2");
 
     cache.Put("Hello", 1);
     ASSERT_EQ(cache.Get("Hello"), 1);
@@ -18,7 +18,7 @@ TEST(NoPolicyCache, Add_one_element)
 TEST(NoPolicyCache, Add_delete_add_one_element)
 {
     constexpr std::size_t cache_size = 1;
-    caches::fixed_sized_cache<std::string, int> cache(cache_size);
+    caches::fixed_sized_cache<std::string, int> cache(cache_size, "-1", "-2");
 
     cache.Put("Hello", 1);
     cache.Put("World", 2);
@@ -29,7 +29,7 @@ TEST(NoPolicyCache, Add_delete_add_one_element)
 TEST(NoPolicyCache, Add_many_elements)
 {
     constexpr std::size_t cache_size = 1024;
-    caches::fixed_sized_cache<std::string, std::size_t> cache(cache_size);
+    caches::fixed_sized_cache<std::string, std::size_t> cache(cache_size, "-1", "-2");
 
     for (std::size_t i = 0; i < cache_size; ++i)
     {
@@ -47,7 +47,7 @@ TEST(NoPolicyCache, Add_many_elements)
 TEST(NoPolicyCache, Small_cache_many_elements)
 {
     constexpr std::size_t cache_size = 1;
-    caches::fixed_sized_cache<std::string, std::size_t> cache(cache_size);
+    caches::fixed_sized_cache<std::string, std::size_t> cache(cache_size, "-1", "-2");
 
     for (std::size_t i = 0; i < cache_size; ++i)
     {
@@ -62,7 +62,7 @@ TEST(NoPolicyCache, Small_cache_many_elements)
 TEST(NoPolicyCache, Remove_Test)
 {
     constexpr std::size_t TEST_SIZE = 10;
-    caches::fixed_sized_cache<std::string, std::size_t> fc(TEST_SIZE);
+    caches::fixed_sized_cache<std::string, std::size_t> fc(TEST_SIZE, "-1", "-2");
 
     for (std::size_t i = 0; i < TEST_SIZE; ++i)
     {
@@ -87,7 +87,7 @@ TEST(NoPolicyCache, Remove_Test)
 TEST(NoPolicyCache, TryGet)
 {
     constexpr std::size_t TEST_CASE{10};
-    no_policy_cache_t<std::string, std::size_t> cache{TEST_CASE};
+    no_policy_cache_t<std::string, std::size_t> cache{TEST_CASE, "-1", "-2"};
 
     for (std::size_t i = 0; i < TEST_CASE; ++i)
     {

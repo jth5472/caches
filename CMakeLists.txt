@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 project(caches
     VERSION 0.0.3)
@@ -25,7 +26,9 @@ endif ()
 add_library(caches INTERFACE)
 target_include_directories(caches INTERFACE
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/deps/sparsehash-c11>
+)
 
 if (BUILD_TEST)
     enable_testing()

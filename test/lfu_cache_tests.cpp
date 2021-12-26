@@ -11,7 +11,7 @@ TEST(LFUCache, Simple_Test)
     constexpr size_t FIRST_FREQ = 10;
     constexpr size_t SECOND_FREQ = 9;
     constexpr size_t THIRD_FREQ = 8;
-    lfu_cache_t<std::string, int> cache(3);
+    lfu_cache_t<std::string, int> cache(3, "-1", "-2");
 
     cache.Put("A", 1);
     cache.Put("B", 2);
@@ -43,7 +43,7 @@ TEST(LFUCache, Simple_Test)
 TEST(LFUCache, Single_Slot)
 {
     constexpr size_t TEST_SIZE = 5;
-    lfu_cache_t<int, int> cache(1);
+    lfu_cache_t<int, int> cache(1, -1, -2);
 
     cache.Put(1, 10);
 
@@ -63,7 +63,7 @@ TEST(LFUCache, Single_Slot)
 TEST(LFUCache, FrequencyIssue)
 {
     constexpr size_t TEST_SIZE = 50;
-    lfu_cache_t<int, int> cache(3);
+    lfu_cache_t<int, int> cache(3, -1, -2);
 
     cache.Put(1, 10);
     cache.Put(2, 1);
@@ -96,7 +96,7 @@ TEST(LFUCache, FrequencyIssue)
 
 TEST(LFUCache, Remove_Test) {
   constexpr std::size_t TEST_SIZE = 10;
-  lfu_cache_t <std::string, std::size_t> fc(TEST_SIZE);
+  lfu_cache_t <std::string, std::size_t> fc(TEST_SIZE, "-1", "-2");
 
   for (std::size_t i = 0; i < TEST_SIZE; ++i) {
     fc.Put(std::to_string(i), i);
@@ -118,7 +118,7 @@ TEST(LFUCache, Remove_Test) {
 TEST(LFUCache, TryGet)
 {
     constexpr std::size_t TEST_CASE{10};
-    lfu_cache_t<std::string, std::size_t> cache{TEST_CASE};
+    lfu_cache_t<std::string, std::size_t> cache{TEST_CASE, "-1", "-2"};
 
     for (std::size_t i = 0; i < TEST_CASE; ++i)
     {

@@ -11,7 +11,7 @@ using lru_cache_t =
 
 TEST(CacheTest, SimplePut)
 {
-    lru_cache_t<std::string, int> cache(1);
+    lru_cache_t<std::string, int> cache(1, "-1", "-2");
 
     cache.Put("test", 666);
 
@@ -21,7 +21,7 @@ TEST(CacheTest, SimplePut)
 TEST(CacheTest, PutWithUpdate)
 {
     constexpr std::size_t TEST_CASE = 4;
-    lru_cache_t<std::string, std::size_t> cache{TEST_CASE};
+    lru_cache_t<std::string, std::size_t> cache{TEST_CASE, "-1", "-2"};
 
     for (size_t i = 0; i < TEST_CASE; ++i)
     {
@@ -43,7 +43,7 @@ TEST(CacheTest, PutWithUpdate)
 
 TEST(CacheTest, MissingValue)
 {
-    lru_cache_t<std::string, int> cache(1);
+    lru_cache_t<std::string, int> cache(1, "-1", "-2");
 
     EXPECT_THROW(cache.Get("test"), std::range_error);
 }
@@ -52,7 +52,7 @@ TEST(CacheTest, KeepsAllValuesWithinCapacity)
 {
     constexpr int CACHE_CAP = 50;
     const int TEST_RECORDS = 100;
-    lru_cache_t<int, int> cache(CACHE_CAP);
+    lru_cache_t<int, int> cache(CACHE_CAP, -1, -2);
 
     for (int i = 0; i < TEST_RECORDS; ++i)
     {
@@ -73,7 +73,7 @@ TEST(CacheTest, KeepsAllValuesWithinCapacity)
 TEST(LRUCache, Remove_Test)
 {
     constexpr std::size_t TEST_SIZE = 10;
-    lru_cache_t<std::string, std::size_t> fc(TEST_SIZE);
+    lru_cache_t<std::string, std::size_t> fc(TEST_SIZE, "-1", "-2");
 
     for (std::size_t i = 0; i < TEST_SIZE; ++i)
     {
@@ -98,7 +98,7 @@ TEST(LRUCache, Remove_Test)
 TEST(LRUCache, CachedCheck)
 {
     constexpr std::size_t TEST_SUITE = 4;
-    lru_cache_t<std::string, std::size_t> cache(TEST_SUITE);
+    lru_cache_t<std::string, std::size_t> cache(TEST_SUITE, "-1", "-2");
 
     for (std::size_t i = 0; i < TEST_SUITE; ++i)
     {
@@ -118,15 +118,15 @@ TEST(LRUCache, CachedCheck)
 
 TEST(LRUCache, ConstructCache)
 {
-    EXPECT_THROW((lru_cache_t<std::string, std::size_t>(0)),
+    EXPECT_THROW((lru_cache_t<std::string, std::size_t>(0, "-1", "-2")),
                  std::invalid_argument);
-    EXPECT_NO_THROW((lru_cache_t<std::string, std::size_t>(1024)));
+    EXPECT_NO_THROW((lru_cache_t<std::string, std::size_t>(1024, "-1", "-2")));
 }
 
 TEST(LRUCache, TryGet)
 {
     constexpr std::size_t TEST_CASE{10};
-    lru_cache_t<std::string, std::size_t> cache{TEST_CASE};
+    lru_cache_t<std::string, std::size_t> cache{TEST_CASE, "-1", "-2"};
 
     for (std::size_t i = 0; i < TEST_CASE; ++i)
     {

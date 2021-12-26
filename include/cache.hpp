@@ -13,7 +13,7 @@
 #include <limits>
 #include <memory>
 #include <mutex>
-#include <unordered_map>
+#include <sparsehash/dense_hash_map>
 
 namespace caches
 {
@@ -28,8 +28,8 @@ template <typename Key, typename Value, template <typename> class Policy = NoCac
 class fixed_sized_cache
 {
   public:
-    using iterator = typename std::unordered_map<Key, Value>::iterator;
-    using const_iterator = typename std::unordered_map<Key, Value>::const_iterator;
+    using iterator = typename google::dense_hash_map<Key, Value>::iterator;
+    using const_iterator = typename google::dense_hash_map<Key, Value>::const_iterator;
     using operation_guard = typename std::lock_guard<std::mutex>;
     using Callback = typename std::function<void(const Key &key, const Value &value)>;
 
@@ -41,7 +41,7 @@ class fixed_sized_cache
      * \param[in] OnErase Callback function to be called when cache's element get erased
      */
     explicit fixed_sized_cache(
-        size_t max_size, const Policy<Key> policy = Policy<Key>{},
+        size_t max_size, Key empty_key,  Key deleted_key, const Policy<Key> policy = Policy<Key>{},
         Callback OnErase = [](const Key &, const Value &) {})
         : cache_policy{policy}, max_cache_size{max_size}, OnEraseCallback{OnErase}
     {
@@ -49,12 +49,16 @@ class fixed_sized_cache
         {
             throw std::invalid_argument{"Size of the cache should be non-zero"};
         }
+
+        cache_items_map.set_empty_key(empty_key);
+        cache_items_map.set_deleted_key(deleted_key);
     }
 
     ~fixed_sized_cache() noexcept
     {
         Clear();
     }
+
 
     /**
      * \brief Put element into the cache
@@ -170,9 +174,8 @@ class fixed_sized_cache
     void Clear()
     {
         operation_guard lock{safe_op};
-
         std::for_each(begin(), end(),
-                      [&](const std::pair<const Key, Value> &el) { cache_policy.Erase(el.first); });
+                    [&](const std::pair<const Key, Value> &el) { cache_policy.Erase(el.first); });
         cache_items_map.clear();
     }
 
@@ -190,7 +193,7 @@ class fixed_sized_cache
     void Insert(const Key &key, const Value &value)
     {
         cache_policy.Insert(key);
-        cache_items_map.emplace(std::make_pair(key, value));
+        cache_items_map.insert({key, value});
     }
 
     void Erase(const_iterator elem)
@@ -210,7 +213,7 @@ class fixed_sized_cache
     void Update(const Key &key, const Value &value)
     {
         cache_policy.Touch(key);
-        cache_items_map[key] = value;
+        cache_items_map[key] = std::move(value);
     }
 
     const_iterator FindElem(const Key &key) const
@@ -232,7 +235,7 @@ class fixed_sized_cache
     }
 
   private:
-    std::unordered_map<Key, Value> cache_items_map;
+    google::dense_hash_map<Key, Value> cache_items_map;
     mutable Policy<Key> cache_policy;
     mutable std::mutex safe_op;
     size_t max_cache_size;

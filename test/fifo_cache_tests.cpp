@@ -9,7 +9,7 @@ using fifo_cache_t =
 
 TEST(FIFOCache, Simple_Test)
 {
-    fifo_cache_t<int, int> fc(2);
+    fifo_cache_t<int, int> fc(2, -1, -2);
 
     fc.Put(1, 10);
     fc.Put(2, 20);
@@ -30,7 +30,7 @@ TEST(FIFOCache, Simple_Test)
 
 TEST(FIFOCache, Missing_Value)
 {
-    fifo_cache_t<int, int> fc(2);
+    fifo_cache_t<int, int> fc(2, -1, -2);
 
     fc.Put(1, 10);
 
@@ -42,7 +42,7 @@ TEST(FIFOCache, Missing_Value)
 TEST(FIFOCache, Sequence_Test)
 {
     constexpr int TEST_SIZE = 10;
-    fifo_cache_t<std::string, int> fc(TEST_SIZE);
+    fifo_cache_t<std::string, int> fc(TEST_SIZE, "-1", "-2");
 
     for (size_t i = 0; i < TEST_SIZE; ++i)
     {
@@ -82,7 +82,7 @@ TEST(FIFOCache, Sequence_Test)
 
 TEST(FIFOCache, Remove_Test) {
   constexpr std::size_t TEST_SIZE = 10;
-  fifo_cache_t <std::string, std::size_t> fc(TEST_SIZE);
+  fifo_cache_t <std::string, std::size_t> fc(TEST_SIZE, "-1", "-2");
 
   for (std::size_t i = 0; i < TEST_SIZE; ++i) {
     fc.Put(std::to_string(i), i);
@@ -104,7 +104,7 @@ TEST(FIFOCache, Remove_Test) {
 TEST(FIFOCache, TryGet)
 {
     constexpr std::size_t TEST_CASE{10};
-    fifo_cache_t<std::string, std::size_t> cache{TEST_CASE};
+    fifo_cache_t<std::string, std::size_t> cache{TEST_CASE, "-1", "-2"};
 
     for (std::size_t i = 0; i < TEST_CASE; ++i)
     {
