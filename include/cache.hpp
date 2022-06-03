@@ -86,6 +86,33 @@ class fixed_sized_cache
     }
 
     /**
+     * \brief Try to put element into the cache if it doesnt exist
+     * \param[in] key Key value to use
+     * \param[in] value Value to assign to the given key
+     */
+ 
+    void TryPut(const Key &key, const Value &value) noexcept
+    {
+        operation_guard lock{safe_op};
+        auto elem_it = FindElem(key);
+
+        if (elem_it == cache_items_map.end())
+        {
+            // add new element to the cache
+            if (cache_items_map.size() + 1 > max_cache_size)
+            {
+                auto disp_candidate_key = cache_policy.ReplCandidate();
+
+                Erase(disp_candidate_key);
+            }
+
+            Insert(key, value);
+        }
+    }
+
+ 
+
+    /**
      * \brief Try to get an element by the given key from the cache
      * \param[in] key Get element by key
      * \return Pair of iterator that points to the element and boolean value that shows
